@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Longevity Protocol — Dr. Rhonda Patrick × DOAC</title>
+<meta name="description" content="Offline longevity protocol for training, supplements, shopping, recipes, sauna, cold plunge, and lift tracking.">
+<meta name="theme-color" content="#f5f4f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13131a" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Longevity">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<style>
+:root{--text:#1a1a2e;--muted:#5a5a7a;--bg:#f5f4f0;--card-bg:#fff;--border:#e0ddd8;--color-background-secondary:#f0eee8}
+@media(prefers-color-scheme:dark){:root{--text:#e8e6e1;--muted:#9a98a0;--bg:#13131a;--card-bg:#1c1c28;--border:#2a2a3a;--color-background-secondary:#262636}}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{font-family:'DM Sans','Aptos','Segoe UI','Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+button,input{font:inherit;-webkit-tap-highlight-color:transparent}
+button{min-height:44px;touch-action:manipulation}
+input{font-size:16px}
+.wrap{max-width:800px;margin:0 auto;padding:2rem 1.5rem;padding-left:max(1.5rem,env(safe-area-inset-left));padding-right:max(1.5rem,env(safe-area-inset-right));padding-bottom:max(2rem,env(safe-area-inset-bottom))}
+.tag{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#E8453C;margin-bottom:6px}
+h1{font-size:1.6rem;font-weight:800;line-height:1.2}
+.sub{font-size:.82rem;color:var(--muted);margin-top:6px}
+.src{font-size:.72rem;color:var(--muted);font-style:italic;margin-top:4px}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:1.5rem;overflow-x:auto;position:sticky;top:0;z-index:5;background:var(--bg);padding-top:.25rem;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 14px;border:none;background:0;font-size:.78rem;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;font-family:inherit;transition:all .15s}
+.tab.active{font-weight:700;color:var(--text);border-bottom-color:#E8453C}
+.card{background:var(--card-bg);border-radius:10px;padding:1rem 1.25rem;margin-bottom:.75rem}
+.card-left{border-left:4px solid var(--accent)}
+.grid{display:grid;gap:.75rem}
+.day-row{display:grid;grid-template-columns:110px 1fr auto;align-items:center;background:var(--card-bg);border-radius:10px;padding:1rem 1.25rem;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.day-row.today{box-shadow:0 0 0 2px #E8453C33,0 8px 24px rgba(232,69,60,.08)}
+.day-row:hover{transform:translateX(4px);box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.badge{font-size:.7rem;padding:2px 8px;border-radius:20px;font-weight:600;display:inline-block}
+.badge-sauna{background:#E8453C22;color:#E8453C}
+.badge-cold{background:#2D7DD222;color:#2D7DD2}
+.exercise-row{display:grid;grid-template-columns:140px 1fr 70px;align-items:center;padding:.75rem 1rem;background:var(--card-bg);border-radius:8px;font-size:.85rem}
+.zone-pill{display:inline-flex;align-items:center;margin-top:7px;padding:5px 9px;border-radius:7px;background:#45B69C14;color:#1D9E75;font-size:.76rem;font-weight:700}
+.day-btn{padding:6px 14px;border-radius:20px;border:none;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+.totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;font-size:.8rem;color:var(--muted)}
+.supp-card{background:var(--card-bg);border-radius:10px;overflow:hidden;cursor:pointer}
+.supp-header{padding:1rem 1.25rem;display:grid;grid-template-columns:1fr auto;align-items:center}
+.supp-detail{padding:0 1.25rem 1rem;font-size:.85rem;color:var(--muted);line-height:1.7;border-top:1px solid var(--border);display:none}
+.supp-detail.open{display:block}
+.arrow{font-size:1.2rem;color:var(--muted);transition:transform .2s}
+.arrow.open{transform:rotate(180deg)}
+.bonus-btn{margin-top:1.25rem;padding:10px 20px;border-radius:8px;border:1px solid var(--border);background:var(--card-bg);font-size:.85rem;font-weight:600;cursor:pointer;color:var(--text);width:100%;font-family:inherit}
+.bonus-grid{display:none;margin-top:.75rem}.bonus-grid.open{display:grid;gap:.5rem}
+.bonus-item{padding:.75rem 1rem;background:var(--card-bg);border-radius:8px;border-left:3px solid #9a98a0}
+.hc-btn{padding:10px 20px;border-radius:8px;border:none;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem;margin-bottom:1.5rem}
+.metric{background:var(--card-bg);border-radius:10px;padding:1rem 1.25rem}
+.metric-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
+.metric-val{font-size:.95rem;font-weight:700;color:var(--text)}
+.rule{font-size:.82rem;color:var(--muted);line-height:1.6;padding-left:1rem;position:relative;margin-bottom:.5rem}
+.rule::before{content:"›";position:absolute;left:0;font-weight:700}
+.note-box{padding:1rem 1.25rem;border-radius:10px;font-size:.82rem;color:var(--muted);line-height:1.7;margin-top:1rem}
+.disclaimer{margin-top:2rem;padding:1rem 1.25rem;background:var(--card-bg);border-radius:10px;border:1px solid var(--border);font-size:.78rem;color:var(--muted);line-height:1.7}
+.hidden{display:none}
+.section-title{font-weight:700;font-size:.85rem;margin-bottom:.5rem}
+p.intro{color:var(--muted);font-size:.9rem;line-height:1.7;margin-bottom:1.5rem;max-width:700px}
+@media(max-width:620px){
+.wrap{padding-top:1rem}
+.tag{font-size:.66rem}
+h1{font-size:1.45rem}
+.sub,.src{font-size:.78rem}
+.tabs{margin-left:calc(max(1rem,env(safe-area-inset-left)) * -1);margin-right:calc(max(1rem,env(safe-area-inset-right)) * -1);padding-left:max(1rem,env(safe-area-inset-left));padding-right:max(1rem,env(safe-area-inset-right))}
+.tab{padding:12px 13px;font-size:.76rem}
+.card,.metric,.note-box,.disclaimer{padding:1rem}
+.day-row{grid-template-columns:1fr;gap:.45rem;padding:1rem}
+.day-row:hover{transform:none}
+.day-row>div:last-child{justify-content:flex-start}
+.exercise-row{grid-template-columns:1fr;gap:.45rem;align-items:start;padding:1rem}
+.exercise-row>span:last-child{text-align:left!important}
+.metric-grid{grid-template-columns:1fr}
+.supp-header{padding:1rem;gap:.75rem}
+.supp-detail{padding:0 1rem 1rem}
+.day-btn{flex:1 1 68px;padding:9px 10px}
+table{min-width:760px}
+}
+@media(max-width:380px){
+.wrap{padding-left:max(.85rem,env(safe-area-inset-left));padding-right:max(.85rem,env(safe-area-inset-right))}
+.tab{padding-left:11px;padding-right:11px}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const TABS=["Weekly Overview","Supplements","Exercise Detail","Heat & Cold","Nutrition","Recipes","Shopping List","My Lifts"];
+const DAYS=[{day:"Monday",label:"Strength + Sauna",color:"#E8453C",type:"Strength Training",dur:"60–75 min",detail:[["Warm-up","10 min light rowing or cycling","10 min"],["⚡ Jump Squats","3 × 5 reps at 40–70% 1RM — EXPLOSIVE (3–5 min rest)","10 min"],["⚡ Explosive Push-ups","3 × 5 reps — max speed off the floor (3 min rest)","8 min"],["🔴 Back Squats","4 × 3–5 reps at 70–85% 1RM — heavy, 3-1-1 cadence (3–5 min rest)","15 min"],["🔴 Deadlifts","3 × 3–5 reps at 70–85% 1RM — heavy, 3-1-1 cadence (3–5 min rest)","12 min"],["🔴 Overhead Press","3 × 3–5 reps at 70–85% 1RM — 3-1-1 cadence (3–5 min rest)","10 min"],["🟢 Farmer's Carries","3 × 40m walks at 60–75% 1RM","6 min"],["Cool-down","5 min stretching + dead hangs for grip","5 min"]],sauna:true,cold:false,notes:"Session order matters: Power first (freshest nervous system) → Strength → Maintenance. ⚡ = Power (40–70% 1RM, max bar speed). 🔴 = Strength (70–85% 1RM, 3-1-1 cadence: 3 sec down, 1 sec pause, 1 sec up). 🟢 = Maintenance (60–75% 1RM, moderate reps). Stop at technical failure — never grind. Post-workout sauna 20–30 min. No cold plunge within 4 hrs."},{day:"Tuesday",label:"Norwegian 4×4 + Cold",color:"#2D7DD2",type:"Norwegian 4×4 HIIT",dur:"40–45 min",detail:[["Warm-up","10 min progressive cycling (indoor bike or rower)","10 min"],["Interval 1","4 min at 85–95% max HR / 3 min recovery at 60–75% HR","7 min"],["Interval 2","4 min at 85–95% max HR / 3 min recovery at 60–75% HR","7 min"],["Interval 3","4 min at 85–95% max HR / 3 min recovery at 60–75% HR","7 min"],["Interval 4","4 min at 85–95% max HR / recovery","4–7 min"],["Cool-down","5 min very easy pedalling","5 min"]],sauna:false,cold:true,notes:"Gold standard for VO2 max (Dr. Levine's 'Prescription for Life'). Use indoor bike or rower. Long intervals (≥2 min) most effective — 4 min intervals maximise time at VO2 max. Cold plunge OK immediately after cardio. Build progressively over 2–3 months."},{day:"Wednesday",label:"Zone 2 Endurance + Sauna",color:"#45B69C",type:"Zone 2 Aerobic",dur:"45–60 min",detail:[["Indoor Cycling","45–60 min at 60–70% max HR (Zone 2: conversational pace)","45–60 min"],["Alternative","Rowing at steady state, or brisk treadmill walk on incline","—"]],sauna:true,cold:false,notes:"Base-building session. Should be able to speak in full sentences but with effort (RPE 9–12). Builds mitochondrial density, fat oxidation, and aerobic efficiency. Post-workout sauna 20–30 min."},{day:"Thursday",label:"Strength + Sauna",color:"#E8453C",type:"Strength Training",dur:"60–75 min",detail:[["Warm-up","10 min light rowing or cycling","10 min"],["⚡ Power Cleans","4 × 3–5 reps at 40–70% 1RM — EXPLOSIVE (3–5 min rest)","12 min"],["⚡ Med Ball Slams","3 × 5 reps — max force into ground (2 min rest)","6 min"],["🔴 Front Squats","4 × 3–5 reps at 70–85% 1RM — 3-1-1 cadence (3–5 min rest)","15 min"],["🔴 Bench Press","3 × 3–5 reps at 70–85% 1RM — 3-1-1 cadence (3–5 min rest)","10 min"],["🔴 Bent-Over Rows","3 × 3–5 reps at 70–85% 1RM — 3-1-1 cadence (3–5 min rest)","10 min"],["🟢 Pull-ups / Lat Pulldown","3 × 8–12 reps at 60–75% 1RM (2 min rest)","6 min"],["🟢 Loaded Lunges","3 × 10 each leg (90 sec rest)","6 min"],["Cool-down","5 min stretching + dead hangs 3 × max hold","5 min"]],sauna:true,cold:false,notes:"Session order: Power first → Strength → Maintenance. ⚡ = Power (40–70% 1RM, max speed/intent). 🔴 = Strength (70–85% 1RM, 3-1-1 cadence). 🟢 = Maintenance (60–75% 1RM, 8–15 reps, 1–2 reps in tank). Leg power directly linked to brain volume preservation. Grip work (dead hangs) — grip strength is a top longevity predictor. Post-workout sauna."},{day:"Friday",label:"Recovery + Cold",color:"#7B68EE",type:"Active Recovery",dur:"30–45 min",detail:[["Light Aerobic","20–30 min easy walk, light cycling, or swimming","20–30 min"],["Mobility / Yoga","15–20 min stretching, foam rolling, joint mobility","15–20 min"]],sauna:false,cold:true,notes:"Mental and physical reset. Rhonda: 'It's this mental cleaning out that I love.' Cold plunge in the morning for dopamine/norepinephrine boost."},{day:"Saturday",label:"Long Endurance + Sauna",color:"#F4A261",type:"Long Aerobic / Hike",dur:"90–120 min",detail:[["Hike or Long Walk","90–120 min moderate pace, varied terrain","90–120 min"],["Alternative","Long indoor cycle (90 min) or combined cycle + row","—"]],sauna:true,cold:false,notes:"Levine protocol: 1+ hour endurance per week. Talk test — hold a conversation but not sing. Evening sauna."},{day:"Sunday",label:"Rest + Sauna",color:"#A8A8A8",type:"Full Rest or Light Stretch",dur:"0–20 min",detail:[["Optional Stretching","Light stretching, breathing exercises, or complete rest","0–20 min"],["Exercise Snacks (VILPA)","3–4 × 1–2 min bursts (stair sprints, squats, bike sprints)","~5 min"]],sauna:true,cold:false,notes:"Dr. Gibala's VILPA: 4 min/day vigorous intermittent activity = 26–34% lower all-cause mortality. 10 bodyweight squats every 45 min improves glucose regulation 22%. Evening sauna for sleep."}];
+const SUPPS=[{name:"Omega-3 Fish Oil (EPA + DHA)",dose:"2–4g EPA/DHA combined",timing:"Split AM/PM with meals",p:1,notes:"Rhonda's personal practice: 2g EPA (morning) + 2g DHA (evening) = 4g total in triglyceride form. She takes Metagenics EPA-DHA 2400. Conservative dose: 2g/day to reach Omega-3 Index 8%+. Loading: 5g/day for 4 weeks (Dr. McGlory), then maintenance. Quality: TOTOX < 10, triglyceride form, IFOS/NSF certified, >80% concentration. Refrigerate. Other brands: OmegaVia, Pure Encapsulations One Omega. Test via OmegaQuant every 4 months. Note: doses >1.8g/day may carry slight Afib risk in older adults with CV risk factors — discuss with GP.",color:"#2D7DD2"},{name:"Vitamin D3",dose:"4,000–5,000 IU",timing:"Morning, with fat-containing meal",p:2,notes:"Target blood: 40–60 ng/mL. D3 only — D2 less effective and can reduce D3 levels. Rhonda takes Thorne D-5,000 (4,000 IU from multivitamin + additional). Regulates 5%+ of human genome. Deficiency = up to 80% higher dementia risk. D3 supplementation in deficient individuals slowed biological aging by ~2 years. Take with K2 and fat.",color:"#F4A261"},{name:"Multivitamin (without iron)",dose:"1 daily",timing:"Morning, with food",p:3,notes:"COSMOS trials (13,000+ participants): reversed episodic brain aging ~3–5 yrs, slowed epigenetic aging. No iron for men — excess iron = oxidative stress + DNA damage. Rhonda personally takes Pure Encapsulations O.N.E. Multivitamin (bioavailable forms, clean formulation). The COSMOS study used Centrum Silver. Note: Pure Encapsulations O.N.E. does not contain magnesium — that's why she supplements it separately. Also compensates for mineral loss from RO water filtration.",color:"#45B69C"},{name:"Magnesium",dose:"400mg elemental",timing:"Evening (aids sleep)",p:4,notes:"~50% deficient. Required for 300+ enzymes, DNA repair. Athletes need 10–20% more (sweat losses). Required cofactor for D3 activation. Highest levels = 40% lower all-cause mortality. Each 100mg decrease = 24% more pancreatic cancer. Reduces sleep onset ~15–20 min. Threonate (brain), Glycinate (sleep). 350–400mg/day.",color:"#7B68EE"},{name:"Creatine Monohydrate",dose:"10g daily",timing:"Any time, with water or shake",p:5,notes:"Brain needs higher doses — 5g saturates muscle, 10g+ for brain uptake. Rhonda takes 10g/day. Higher bodyweight dosing may support bone health alongside resistance training. Negates sleep deprivation cognitive deficits. Improved CBT outcomes for depression. 14% lower cancer risk per 0.09g additional dietary creatine. No loading needed — saturates ~28 days. Combine with carbs (50–100g). NSF Certified for Sport. 40+ years safety data.",color:"#E8453C"},{name:"Vitamin K2 (MK-7)",dose:"100–200mcg",timing:"With Vitamin D3",p:6,notes:"Essential D3 companion — directs calcium to bones, away from arteries. Rhonda uses Thorne K2/D3 Drops (combines both). Critical for blood coagulation. Supports bone density alongside creatine and resistance training.",color:"#D4A373"}];
+const BONUS=[{name:"Sulforaphane (Avmacol)",dose:"Standardised broccoli seed extract daily",notes:"Increases glutathione in brain/plasma via Nrf2 pathway. Detoxifies BPA and pollutants. 12 clinical studies on Avmacol. Or eat cruciferous vegetables daily."},{name:"Zinc",dose:"11mg diet, up to 30mg supplemental",notes:"Most abundant brain trace element. 30mg/day × 3 months enhanced BDNF. 12–20% of adults deficient. Supports pro-BDNF to mature BDNF conversion."},{name:"Urolithin A",dose:"500–1,000mg daily",notes:"Promotes mitophagy. 1,000mg/day: ~10% VO2 max trend + 10–12% hamstring strength in middle-aged adults. Rejuvenates immune CD8+ T cells."},{name:"Curcumin (Phytosome)",dose:"500–1,000mg (Meriva-style phytosome form)",notes:"Robust anti-inflammatory — reduces CRP, TNF-α, IL-6. TNF-α inhibition linked to lower Alzheimer's risk. Must be phytosome/Meriva form for bioavailability (standard curcumin poorly absorbed). Avoid NSAIDs around exercise."},{name:"Ubiquinol (Active CoQ10)",dose:"100–200mg daily",notes:"Active form of Coenzyme Q10 — critical for mitochondrial energy production. Levels decline with age, making supplementation increasingly important after 60. Supports heart function, cellular energy, and may slow mitochondrial aging. Ubiquinol (reduced form) is better absorbed than ubiquinone."},{name:"Glutamine",dose:"5–10g daily",notes:"Supports gut epithelial health + immune function. Converts to alpha-ketoglutarate — key fuel for intestinal cells. May reduce respiratory illness post-exercise."}];
+const RECIPES=[{name:"Rhonda's Micronutrient Smoothie (Updated)",tag:"3pm Last Meal / Fasting Window",color:"#7B68EE",cal:"~575 cal per serving",servings:"Makes 2 servings (~32oz each)",ingredients:["8 large kale leaves","2 rainbow chard leaves with stems","1 medium tomato","1 large carrot","2 celery stalks","8 pieces fresh parsley","1 apple (cored, chopped)","2 cups baby spinach","1 lemon (juiced)","2 cups blueberries (fresh or frozen)","1 large avocado","¼ cup hydrolyzed collagen powder","2 cups water","Optional: 1 scoop whey/plant protein","Optional: 1 tbsp chia seeds","Optional: 10g creatine"],steps:["Roughly chop kale, chard, celery, and parsley. Chop tomato and carrot into chunks.","Add all chopped veg to a high-powered blender (Vitamix or Blendtec — NOT a juicer).","Core and chop apple, add to blender with blueberries and avocado.","Pour in water. Squeeze lemon juice in (discard rind). Add collagen powder and optional protein/chia/creatine.","Blend on high for 2–3 minutes until completely smooth.","Pour half (~32oz) for one serving. Refrigerate the other half for tomorrow."],notes:"The avocado provides slow-digesting fat, the fibre load (~20g/serve) keeps you full for hours, and the collagen supports gut lining during fasting. Add protein powder to bring total to ~40g protein. You can dump your evening omega-3 DHA and creatine in here too — knock out supplements and your last meal in one hit. Rhonda's tip: always use a blender, never a juicer — juicing removes the fibre."},{name:"Rhonda's Morning Berry Smoothie",tag:"Breakfast / Post-Workout",color:"#E8453C",cal:"~300 cal per serving",servings:"1 serving",ingredients:["1 cup organic frozen blueberries","½ cup organic frozen blackberries","½ cup organic frozen strawberries","½ cup organic frozen raspberries","2–3 kale leaves","½ avocado","1 cup water or unsweetened flax milk"],steps:["Add kale and liquid to blender first, blend briefly to break down.","Add all frozen berries and avocado.","Blend on high until smooth (1–2 min)."],notes:"This is the simpler version from the DOAC/BDNF Blueprint — rich in polyphenols and flavonoids. 1 cup blueberries/day shown to improve cognition and cerebral blood flow. Pairs well with a high-protein breakfast (eggs, Greek yoghurt) to hit your 30g morning protein target."},{name:"CocoaVia BDNF Drink",tag:"Afternoon",color:"#2D7DD2",cal:"~30 cal",servings:"1 serving",ingredients:["1 scoop CocoaVia powder (500mg flavanols)","1 cup hot water","Stevia to taste"],steps:["Heat water (not boiling — around 70°C).","Add CocoaVia powder and stir.","Sweeten with stevia if desired."],notes:"Rhonda's daily practice. High-flavanol cocoa (494mg) for 12 weeks increased BDNF and improved cognition in older adults. Simple, fast, and effective."}];
+const SHOPPING_CATS=[
+{cat:"Smoothie — Fresh Produce",items:["Kale (large bunch)","Rainbow chard","Baby spinach (bag)","Tomatoes","Carrots (large)","Celery","Fresh parsley","Apples","Lemons","Avocados (large)","Bananas"]},
+{cat:"Smoothie — Frozen",items:["Frozen blueberries (organic)","Frozen blackberries (organic)","Frozen strawberries (organic)","Frozen raspberries (organic)"]},
+{cat:"Smoothie — Pantry",items:["Unsweetened flax milk","Hydrolyzed collagen powder","Whey or plant protein powder","Chia seeds","Flaxseed (optional)"]},
+{cat:"Supplements — Core 6",items:["Omega-3 Fish Oil (EPA+DHA) — Metagenics EPA-DHA 2400 (Rhonda's choice), or OmegaVia, Pure Encapsulations. Triglyceride form, IFOS certified","Vitamin D3 — Thorne D-5,000 (Rhonda's choice)","Multivitamin without iron — Pure Encapsulations O.N.E. (Rhonda's choice) or Centrum Silver (COSMOS study)","Magnesium Glycinate or Threonate — 400mg","Creatine Monohydrate — NSF Certified for Sport","Vitamin K2 (MK-7) — Thorne K2/D3 Drops or standalone 100–200mcg"]},
+{cat:"Supplements — Bonus Stack",items:["Sulforaphane / Avmacol (Nutrimax)","Zinc — 30mg","Urolithin A — 500–1,000mg","Curcumin Phytosome (Meriva-style)","Ubiquinol (CoQ10) — 100–200mg","Glutamine — 5–10g"]},
+{cat:"Drinks & Other",items:["CocoaVia Cardio Health powder or capsules (500mg cocoa flavanols per serve)","Stevia","Resistant starch sources (green bananas, potato starch)"]},
+{cat:"Equipment (One-Time)",items:["High-powered blender (Vitamix or Blendtec)","Heart rate monitor / chest strap","Omega-3 Index test kit (OmegaQuant)"]}
+];
+function getTodayIndex(){return(new Date().getDay()+6)%7}
+const TODAY_INDEX=getTodayIndex();
+let state={tab:0,day:TODAY_INDEX,expanded:-1,showBonus:false,hcView:"sauna",checked:loadChecked(),recipeOpen:-1,shopFilter:null,liftView:"current"};
+const LIFTS=[
+{id:"back_squat",name:"Back Squat",day:"Monday",zone:"strength",icon:"🔴"},
+{id:"front_squat",name:"Front Squat",day:"Thursday",zone:"strength",icon:"🔴"},
+{id:"deadlift",name:"Deadlift",day:"Monday",zone:"strength",icon:"🔴"},
+{id:"bench_press",name:"Bench Press",day:"Thursday",zone:"strength",icon:"🔴"},
+{id:"overhead_press",name:"Overhead Press",day:"Monday",zone:"strength",icon:"🔴"},
+{id:"bent_over_row",name:"Bent-Over Row",day:"Thursday",zone:"strength",icon:"🔴"},
+{id:"power_clean",name:"Power Clean",day:"Thursday",zone:"power",icon:"⚡"},
+{id:"pull_up",name:"Pull-up / Lat Pulldown",day:"Thursday",zone:"maintenance",icon:"🟢"}
+];
+function liftForExercise(title){
+const t=title.toLowerCase();
+if(t.includes("back squat"))return LIFTS.find(l=>l.id==="back_squat");
+if(t.includes("front squat"))return LIFTS.find(l=>l.id==="front_squat");
+if(t.includes("deadlift"))return LIFTS.find(l=>l.id==="deadlift");
+if(t.includes("bench press"))return LIFTS.find(l=>l.id==="bench_press");
+if(t.includes("overhead press"))return LIFTS.find(l=>l.id==="overhead_press");
+if(t.includes("bent-over row"))return LIFTS.find(l=>l.id==="bent_over_row");
+if(t.includes("power clean"))return LIFTS.find(l=>l.id==="power_clean");
+if(t.includes("pull-up")||t.includes("lat pulldown"))return LIFTS.find(l=>l.id==="pull_up");
+return null
+}
+function zoneLabel(zone){return zone==="power"?"Power":zone==="strength"?"Strength":"Maintenance"}
+function zoneColor(zone){return zone==="power"?"#E24B4A":zone==="strength"?"#BA7517":"#1D9E75"}
+function loadLifts(){try{return JSON.parse(localStorage.getItem("lp_lifts"))||{}}catch(e){return{}}}
+function saveLifts(data){try{localStorage.setItem("lp_lifts",JSON.stringify(data))}catch(e){}}
+function loadHistory(){try{return JSON.parse(localStorage.getItem("lp_history"))||[]}catch(e){return[]}}
+function saveHistory(hist){try{localStorage.setItem("lp_history",JSON.stringify(hist))}catch(e){}}
+function calcZones(rm){return{power:[Math.round(rm*0.4),Math.round(rm*0.7)],strength:[Math.round(rm*0.7),Math.round(rm*0.85)],maintenance:[Math.round(rm*0.6),Math.round(rm*0.75)]}}
+function loadChecked(){try{return JSON.parse(localStorage.getItem("lp_checked"))||{}}catch(e){return{}}}
+function saveChecked(){try{localStorage.setItem("lp_checked",JSON.stringify(state.checked))}catch(e){}}
+function h(tag,props,...ch){const el=document.createElement(tag);if(props)Object.entries(props).forEach(([k,v])=>{if(k==="style"&&typeof v==="object")Object.assign(el.style,v);else if(k.startsWith("on"))el.addEventListener(k.slice(2).toLowerCase(),v);else el.setAttribute(k,v)});ch.flat(Infinity).forEach(c=>{if(c==null)return;el.appendChild(typeof c==="string"?document.createTextNode(c):c)});return el}
+function render(){
+const app=document.getElementById("app");app.innerHTML="";
+app.append(
+h("div",{style:{marginBottom:"2rem"}},
+h("div",{class:"tag"},"Dr. Rhonda Patrick × Diary of a CEO"),
+h("h1",null,"Longevity Protocol"),
+h("p",{class:"sub"},"Home gym · Indoor cycling · Sauna & cold plunge"),
+h("p",{class:"src"},"Sources: DOAC Research (2025 + 2026) · How to Train Guide · BDNF Blueprint · Omega-3 Guide · FoundMyFitness")),
+renderTabs(),
+state.tab===0?renderOverview():state.tab===1?renderSupps():state.tab===2?renderExercise():state.tab===3?renderHC():state.tab===4?renderNutrition():state.tab===5?renderRecipes():state.tab===6?renderShopping():renderLifts(),
+h("div",{class:"disclaimer"},h("strong",{style:{color:"var(--text)"}},"Disclaimer: "),"Compiled from Dr. Rhonda Patrick's public recommendations, both DOAC Independent Research documents, the FoundMyFitness How to Train Guide, Cognitive Enhancement Blueprint, and Omega-3 Supplementation Guide. Not medical advice. Consult your GP before starting — especially HIIT, sauna, and supplement protocols. Get baseline bloods first.")
+);
+}
+function renderTabs(){
+const wrap=h("div",{class:"tabs"});
+TABS.forEach((t,i)=>{wrap.append(h("button",{class:"tab"+(state.tab===i?" active":""),onClick:()=>{state.tab=i;render()}},t))});return wrap;
+}
+function renderOverview(){
+const frag=document.createDocumentFragment();
+frag.append(h("p",{class:"intro"},"Based on the Levine \"Prescription for Life\" protocol, Rhonda Patrick's personal routine, the FoundMyFitness How to Train guide, BDNF Blueprint, Omega-3 Guide, and both DOAC Independent Research documents."));
+const grid=h("div",{class:"grid"});
+DAYS.forEach((d,i)=>{
+const row=h("div",{class:"day-row"+(i===TODAY_INDEX?" today":""),style:{borderLeft:`4px solid ${d.color}`},onClick:()=>{state.day=i;state.tab=2;render()}},
+h("span",{style:{fontWeight:700,fontSize:".95rem"}},d.day,i===TODAY_INDEX?h("span",{class:"badge",style:{marginLeft:"8px",background:d.color+"18",color:d.color}},"TODAY"):null),
+h("div",null,h("span",{style:{fontWeight:600,color:d.color,fontSize:".85rem",textTransform:"uppercase",letterSpacing:".04em"}},d.type),h("span",{style:{color:"var(--muted)",fontSize:".8rem",marginLeft:"8px"}},d.dur)),
+h("div",{style:{display:"flex",gap:"6px"}},d.sauna?h("span",{class:"badge badge-sauna"},"SAUNA"):null,d.cold?h("span",{class:"badge badge-cold"},"COLD"):null));
+grid.append(row)});
+frag.append(grid);
+const totals=h("div",{class:"card",style:{marginTop:"1.5rem",border:"1px dashed var(--border)"}},
+h("div",{class:"section-title"},"WEEKLY TOTALS"),
+h("div",{class:"totals"},
+...["Strength: 2 sessions","HIIT (4×4): 1 session","Zone 2: 1–2 sessions","Long Endurance: 1 session","Recovery: 1–2 days","Sauna: 5–6 sessions","Cold Plunge: 2–3 sessions","~Active Hours: 5–7 hrs/wk"].map(t=>{const[l,v]=t.split(": ");return h("div",null,h("strong",{style:{color:"var(--text)"}},l+": "),v)})));
+frag.append(totals);return frag;
+}
+function renderSupps(){
+const frag=document.createDocumentFragment();
+frag.append(h("p",{class:"intro"},"The \"Big 5\" non-negotiables from the DOAC episode + K2. Tap each for sourcing, quality, and dosing detail."));
+SUPPS.forEach((s,i)=>{
+const detail=h("div",{class:"supp-detail"+(state.expanded===i?" open":"")},h("div",{style:{paddingTop:".75rem"}},s.notes));
+const arrow=h("span",{class:"arrow"+(state.expanded===i?" open":"")},"▾");
+const card=h("div",{class:"supp-card",style:{borderLeft:`4px solid ${s.color}`,marginBottom:".75rem"}},
+h("div",{class:"supp-header",onClick:()=>{state.expanded=state.expanded===i?-1:i;render()}},
+h("div",null,
+h("div",{style:{display:"flex",alignItems:"center",gap:"10px",marginBottom:"4px",flexWrap:"wrap"}},h("span",{style:{fontWeight:700,fontSize:"1rem"}},s.name),h("span",{style:{background:s.color+"18",color:s.color,fontSize:".7rem",padding:"2px 8px",borderRadius:"20px",fontWeight:700}},"#"+s.p)),
+h("div",{style:{display:"flex",gap:"16px",fontSize:".85rem",color:"var(--muted)",flexWrap:"wrap"}},h("span",null,h("strong",{style:{color:"var(--text)"}},"Dose: "),s.dose),h("span",null,h("strong",{style:{color:"var(--text)"}},"When: "),s.timing))),arrow),detail);
+frag.append(card)});
+// Bonus button
+frag.append(h("button",{class:"bonus-btn",onClick:()=>{state.showBonus=!state.showBonus;render()}},state.showBonus?"Hide":"Show"," Bonus Stack (6 additional from the documents)"));
+if(state.showBonus){const bg=h("div",{style:{display:"grid",gap:".5rem",marginTop:".75rem"}});
+BONUS.forEach(b=>{bg.append(h("div",{class:"bonus-item"},h("div",{style:{fontWeight:700,fontSize:".9rem"}},b.name," ",h("span",{style:{fontWeight:500,fontSize:".8rem",color:"var(--muted)"}},"— "+b.dose)),h("div",{style:{fontSize:".8rem",color:"var(--muted)",marginTop:"4px",lineHeight:"1.6"}},b.notes)))});frag.append(bg)}
+// Timing cheatsheet
+frag.append(h("div",{class:"card",style:{marginTop:"1.5rem",border:"1px solid var(--border)"}},
+h("div",{class:"section-title"},"DAILY TIMING CHEATSHEET"),
+h("div",{style:{fontSize:".82rem",color:"var(--muted)",lineHeight:"1.8"}},
+h("div",null,h("strong",{style:{color:"var(--text)"}},"Morning with breakfast: "),"D3 (4–5,000 IU) + K2 (100–200mcg) + Multivitamin + Omega-3 EPA (1–2g) + Zinc"),
+h("div",null,h("strong",{style:{color:"var(--text)"}},"Any time: "),"Creatine (10g) in water or shake. Sulforaphane if taking."),
+h("div",null,h("strong",{style:{color:"var(--text)"}},"Evening with dinner: "),"Omega-3 DHA (1–2g) + Magnesium (400mg) + Urolithin A"))));
+// Blood tests
+frag.append(h("div",{class:"note-box",style:{background:"#E8453C0A",border:"1px solid #E8453C22"}},
+h("div",{style:{fontWeight:700,fontSize:".82rem",color:"#E8453C",marginBottom:".4rem"}},"BASELINE BLOOD TESTS"),
+"Get tested before starting: 25-hydroxyvitamin D (target 40–60 ng/mL), Omega-3 Index via OmegaQuant (target 8–11%), metabolic panel, testosterone, fasting glucose, and CRP. Retest Omega-3 Index every 4 months."));
+return frag;
+}
+function renderExercise(){
+const frag=document.createDocumentFragment();
+const lifts=loadLifts();
+const btns=h("div",{style:{display:"flex",gap:"6px",marginBottom:"1.25rem",flexWrap:"wrap"}});
+DAYS.forEach((d,i)=>{btns.append(h("button",{class:"day-btn",style:{background:i===state.day?d.color:"var(--card-bg)",color:i===state.day?"#fff":"var(--muted)"},onClick:()=>{state.day=i;render()}},d.day.slice(0,3)))});
+frag.append(btns);
+const d=DAYS[state.day];
+frag.append(h("div",{style:{borderLeft:`4px solid ${d.color}`,paddingLeft:"1.25rem",marginBottom:"1.5rem"}},
+h("h3",{style:{fontSize:"1.3rem",fontWeight:800}},d.day),
+h("div",{style:{color:d.color,fontWeight:700,fontSize:".85rem",textTransform:"uppercase",letterSpacing:".04em",marginTop:"2px"}},d.label),
+h("div",{style:{color:"var(--muted)",fontSize:".85rem",marginTop:"4px"}},"Total time: "+d.dur)));
+const rows=h("div",{class:"grid",style:{marginBottom:"1.25rem"}});
+d.detail.forEach(r=>{
+const lift=liftForExercise(r[0]);
+const rm=lift?parseFloat(lifts[lift.id]):null;
+const detail=h("span",{style:{color:"var(--muted)"}},r[1]);
+if(lift&&rm>0){
+const range=calcZones(rm)[lift.zone];
+detail.append(h("br"),h("span",{class:"zone-pill",style:{color:zoneColor(lift.zone),background:zoneColor(lift.zone)+"14"}},zoneLabel(lift.zone)+": "+range[0]+"–"+range[1]+"kg from "+rm+"kg 1RM"));
+}
+rows.append(h("div",{class:"exercise-row"},h("span",{style:{fontWeight:700}},r[0]),detail,h("span",{style:{color:d.color,fontWeight:600,textAlign:"right",fontSize:".8rem"}},r[2])))});
+frag.append(rows);
+frag.append(h("div",{class:"card",style:{border:`1px solid ${d.color}22`}},h("div",{style:{fontWeight:700,fontSize:".82rem",color:d.color,marginBottom:".4rem"}},"SESSION NOTES"),h("div",{style:{fontSize:".82rem",color:"var(--muted)",lineHeight:"1.7"}},d.notes)));
+if(state.day===1){
+frag.append(h("div",{class:"note-box",style:{background:"#2D7DD20A",border:"1px solid #2D7DD222"}},
+h("div",{style:{fontWeight:700,fontSize:".82rem",color:"#2D7DD2",marginBottom:".4rem"}},"HEART RATE TARGETS (Age 61)"),
+h("div",{style:{fontSize:".82rem",color:"var(--muted)",lineHeight:"1.8"}},
+h("div",null,"Max HR formulas vary ±10 bpm — get a real test if possible (Dr. Levine):"),
+h("div",{style:{marginTop:"4px"}},"220 − 61 = ",h("strong",{style:{color:"var(--text)"}},"159")," · 208 − (0.7 × 61) = ",h("strong",{style:{color:"var(--text)"}},"165")," · 211 − (0.64 × 61) = ",h("strong",{style:{color:"var(--text)"}},"172")),
+h("div",{style:{marginTop:"6px"}},h("strong",{style:{color:"var(--text)"}},"4×4 work: "),"85–95% → 135–163 bpm range"),
+h("div",null,h("strong",{style:{color:"var(--text)"}},"Recovery: "),"60–75% → 95–129 bpm range"),
+h("div",null,h("strong",{style:{color:"var(--text)"}},"Zone 2 (Wed): "),"60–70% → 95–120 bpm range"),
+h("div",{style:{marginTop:"8px",fontStyle:"italic"}},"Or use RPE: 4×4 = 16–18 (one or two words between breaths). Zone 2 = 9–12 (full sentences with effort)."))));}
+return frag;
+}
+function renderHC(){
+const frag=document.createDocumentFragment();
+const v=state.hcView;
+const btns=h("div",{style:{display:"flex",gap:"8px",marginBottom:"1.5rem"}});
+[["sauna","SAUNA","#E8453C"],["cold","COLD PLUNGE","#2D7DD2"]].forEach(([k,l,c])=>{btns.append(h("button",{class:"hc-btn",style:{background:v===k?c:"var(--card-bg)",color:v===k?"#fff":"var(--muted)"},onClick:()=>{state.hcView=k;render()}},l))});
+frag.append(btns);
+const data=v==="sauna"?{freq:"5–6× per week",temp:"79–82°C (174–180°F)",dur:"20–30 minutes",time:"Post-workout (within 5–10 min) or evening",type:"Traditional dry sauna preferred, 10–20% humidity. Infrared OK at ~60°C with longer sessions.",hydration:"500–700ml water before AND after. Replenish electrolytes (Na, K, Mg).",rules:["Build gradually — start at 15 min if new","Post-strength training is ideal (boosts growth hormone 2–16×)","Combined exercise + 15 min sauna improves VO2 max more than exercise alone","Sauna increases BDNF — 10-week regimen at 80°C boosted BDNF more than light exercise","Hot bath alternative: 20 min at 42°C increased BDNF by 67%","Evening sauna improves sleep quality","Never combine with alcohol","Exit immediately if dizzy, nauseous, or headache","Stay below 100°C (212°F)"],col:"#E8453C"}:{freq:"2–3× per week",temp:"4–15°C (39–59°F)",dur:"3–5 minutes",time:"Morning (for alertness) or after cardio only",type:null,hydration:null,rules:["NEVER within 4 hours of strength training — reduces muscle protein synthesis ~30%","OK immediately after cardio (cycling, rowing, running)","Start at 15°C and work down over weeks","Focus on steady nasal breathing","14°C for 1 hour: norepinephrine +530%, dopamine +250%, metabolic rate +350%","20 seconds at 4.4°C: norepinephrine +200–300%","Morning sessions best — avoid late evening (raises core temp, disrupts sleep)"],col:"#2D7DD2"};
+const mg=h("div",{class:"metric-grid"});
+[["Frequency",data.freq],["Temperature",data.temp],["Duration",data.dur],["Timing",data.time]].forEach(([l,val])=>{mg.append(h("div",{class:"metric"},h("div",{class:"metric-label"},l),h("div",{class:"metric-val"},val)))});
+frag.append(mg);
+if(data.type)frag.append(h("div",{class:"card",style:{marginBottom:"1rem",fontSize:".85rem",color:"var(--muted)"}},h("strong",{style:{color:"var(--text)"}},"Type: "),data.type));
+if(data.hydration)frag.append(h("div",{class:"card",style:{marginBottom:"1rem",fontSize:".85rem",color:"var(--muted)"}},h("strong",{style:{color:"var(--text)"}},"Hydration: "),data.hydration));
+const rules=h("div",{class:"card",style:{border:`1px solid ${data.col}22`}},h("div",{style:{fontWeight:700,fontSize:".82rem",color:data.col,marginBottom:".75rem"}},"PROTOCOL RULES"));
+data.rules.forEach(r=>{const rd=h("div",{class:"rule"});rd.style.setProperty("--rc",data.col);rd.innerHTML="";rd.append(document.createTextNode(r));const b=document.createElement("span");b.style.cssText=`position:absolute;left:0;font-weight:700;color:${data.col}`;b.textContent="›";rd.prepend(b);rules.append(rd)});
+frag.append(rules);
+if(v==="sauna"){
+const sched=h("div",{class:"note-box",style:{background:"#45B69C0A",border:"1px solid #45B69C22"}},h("div",{style:{fontWeight:700,fontSize:".82rem",color:"#45B69C",marginBottom:".4rem"}},"WEEKLY SCHEDULE"));
+const inner=h("div",{style:{fontSize:".82rem",color:"var(--muted)",lineHeight:"1.8"}});
+DAYS.filter(d=>d.sauna).forEach(d=>{inner.append(h("div",null,h("strong",{style:{color:"var(--text)"}},d.day+": "),"20–30 min post-"+(d.type.toLowerCase().includes("rest")?"evening":"workout")))});
+sched.append(inner);frag.append(sched);
+}else{
+const sched=h("div",{class:"note-box",style:{background:"#2D7DD20A",border:"1px solid #2D7DD222"}},h("div",{style:{fontWeight:700,fontSize:".82rem",color:"#2D7DD2",marginBottom:".4rem"}},"WEEKLY SCHEDULE"));
+const inner=h("div",{style:{fontSize:".82rem",color:"var(--muted)",lineHeight:"1.8"}});
+DAYS.filter(d=>d.cold).forEach(d=>{inner.append(h("div",null,h("strong",{style:{color:"var(--text)"}},d.day+": "),"3–5 min — "+(d.day==="Tuesday"?"after 4×4 cardio (OK immediately)":"morning for mood/alertness")))});
+inner.append(h("div",{style:{marginTop:"6px",fontStyle:"italic"}},"Optional 3rd session: Wednesday or Saturday morning (not after strength days)"));
+sched.append(inner);frag.append(sched);
+}
+return frag;
+}
+function renderNutrition(){
+const frag=document.createDocumentFragment();
+frag.append(h("p",{class:"intro"},"Key nutrition protocols from the How to Train guide, BDNF Blueprint, and DOAC research documents."));
+const items=[
+{title:"Daily Protein Target",accent:"#E8453C",big:"1.2–1.6 g/kg bodyweight per day",sub:"Distribution: Spread across 3–4 meals, minimum 20–30g per meal",body:"Sweet spot with resistance training: around 1.6g/kg/day. Prioritise protein at breakfast — 30g reduces appetite all day. Older adults: exercise before protein intake to counteract anabolic resistance (Dr. van Loon). Total daily intake matters more than timing ('anabolic window' is more of a 'barn door' per Dr. Schoenfeld)."},
+{title:"Rhonda's Morning Smoothie",accent:"#7B68EE",sub:"1 cup organic frozen blueberries, blackberries, strawberries, raspberries + kale leaves + avocado",body:"Rich in polyphenols/flavonoids. High flavonoid intake (>15mg/100g) increases BDNF and improves global cognition. 1 cup blueberries/day shown to improve cognition and cerebral blood flow."},
+{title:"Meal Timing",accent:"#F4A261",big:"Stop eating 3+ hours before bed",body:"Evening melatonin inhibits insulin → eating late causes elevated blood glucose. Multiple studies confirm 3 hours as the threshold. Even high-normal fasting glucose = greater brain atrophy in hippocampus and frontal cortex."},
+{title:"Resistant Starch",accent:"#45B69C",sub:"Sources: Cooked-and-cooled potatoes, green bananas, apple fibre",body:"5–15g/day improves sleep disturbance scores and gut health. Fermented by gut microbiota into butyrate (primary fuel for colon cells). Promotes Bifidobacteria growth. Supports gut barrier integrity."},
+{title:"Cocoa Flavanols",accent:"#2D7DD2",sub:"1 scoop CocoaVia (500mg flavanols) in hot water with stevia — afternoon",body:"High-flavanol cocoa (494mg) for 12 weeks increased BDNF and improved cognition in older adults."}
+];
+items.forEach(it=>{
+const card=h("div",{class:"card",style:{borderLeft:`4px solid ${it.accent}`}},h("div",{style:{fontWeight:700,fontSize:"1rem",marginBottom:"4px"}},it.title));
+if(it.big)card.append(h("div",{style:{fontSize:".95rem",fontWeight:700,color:it.accent,marginBottom:"6px"}},it.big));
+if(it.sub)card.append(h("div",{style:{fontSize:".85rem",color:"var(--muted)",marginBottom:"6px"}},it.sub));
+card.append(h("div",{style:{fontSize:".82rem",color:"var(--muted)",lineHeight:"1.7"}},it.body));
+frag.append(card);
+});
+return frag;
+}
+function renderRecipes(){
+const frag=document.createDocumentFragment();
+frag.append(h("p",{class:"intro"},"Recipes pulled from Rhonda Patrick's protocols. Tap each to expand full ingredients, steps, and notes."));
+RECIPES.forEach((r,i)=>{
+const isOpen=state.recipeOpen===i;
+const card=h("div",{style:{background:"var(--card-bg)",borderRadius:"10px",borderLeft:`4px solid ${r.color}`,overflow:"hidden",marginBottom:".75rem"}});
+const header=h("div",{style:{padding:"1rem 1.25rem",cursor:"pointer",display:"grid",gridTemplateColumns:"1fr auto",alignItems:"center"},onClick:()=>{state.recipeOpen=isOpen?-1:i;render()}},
+h("div",null,
+h("div",{style:{display:"flex",alignItems:"center",gap:"10px",marginBottom:"4px",flexWrap:"wrap"}},h("span",{style:{fontWeight:700,fontSize:"1rem"}},r.name),h("span",{style:{background:r.color+"18",color:r.color,fontSize:".7rem",padding:"2px 8px",borderRadius:"20px",fontWeight:700}},r.tag)),
+h("div",{style:{fontSize:".85rem",color:"var(--muted)"}},r.cal," · ",r.servings)),
+h("span",{style:{fontSize:"1.2rem",color:"var(--muted)",transition:"transform .2s",transform:isOpen?"rotate(180deg)":"none"}},"▾"));
+card.append(header);
+if(isOpen){
+const body=h("div",{style:{padding:"0 1.25rem 1.25rem",borderTop:"1px solid var(--border)"}});
+// Ingredients
+body.append(h("div",{style:{fontWeight:700,fontSize:".82rem",color:r.color,marginTop:".75rem",marginBottom:".5rem"}},"INGREDIENTS"));
+const ingList=h("div",{style:{display:"grid",gap:".25rem"}});
+r.ingredients.forEach(ing=>{ingList.append(h("div",{style:{fontSize:".82rem",color:"var(--muted)",paddingLeft:"1rem",position:"relative"}},h("span",{style:{position:"absolute",left:0,color:r.color,fontWeight:700}},"·"),ing))});
+body.append(ingList);
+// Steps
+body.append(h("div",{style:{fontWeight:700,fontSize:".82rem",color:r.color,marginTop:"1rem",marginBottom:".5rem"}},"METHOD"));
+const stepList=h("div",{style:{display:"grid",gap:".5rem"}});
+r.steps.forEach((st,si)=>{stepList.append(h("div",{style:{fontSize:".82rem",color:"var(--muted)",lineHeight:"1.6",display:"grid",gridTemplateColumns:"24px 1fr"}},h("span",{style:{fontWeight:700,color:r.color}},(si+1)+"."),st))});
+body.append(stepList);
+// Notes
+body.append(h("div",{style:{marginTop:"1rem",padding:".75rem 1rem",background:r.color+"08",borderRadius:"8px",border:`1px solid ${r.color}22`,fontSize:".8rem",color:"var(--muted)",lineHeight:"1.7"}},h("strong",{style:{color:"var(--text)"}},"Notes: "),r.notes));
+card.append(body);
+}
+frag.append(card);
+});
+frag.append(h("div",{style:{padding:"1rem 1.25rem",background:"var(--card-bg)",borderRadius:"10px",border:"1px dashed var(--border)",marginTop:".5rem",fontSize:".82rem",color:"var(--muted)",lineHeight:"1.7"}},h("strong",{style:{color:"var(--text)"}},"More recipes coming: "),"This section will grow as more meals are added."));
+return frag;
+}
+function renderShopping(){
+const frag=document.createDocumentFragment();
+const totalItems=SHOPPING_CATS.reduce((s,c)=>s+c.items.length,0);
+const checkedCount=Object.values(state.checked).filter(Boolean).length;
+frag.append(h("p",{class:"intro"},"Tick off what you already have. What's left is your shopping list. Checks are saved to your browser — they'll be here when you come back."));
+// Progress bar
+const pct=totalItems?Math.round(checkedCount/totalItems*100):0;
+const progWrap=h("div",{style:{background:"var(--card-bg)",borderRadius:"10px",padding:"1rem 1.25rem",marginBottom:"1.25rem",border:"1px solid var(--border)"}});
+progWrap.append(h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:".5rem",fontSize:".82rem"}},h("span",{style:{fontWeight:700,color:"var(--text)"}},checkedCount+" of "+totalItems+" items checked"),h("span",{style:{color:"var(--muted)"}},pct+"% done")));
+const barOuter=h("div",{style:{background:"var(--border)",borderRadius:"20px",height:"8px",overflow:"hidden"}});
+barOuter.append(h("div",{style:{background:"#45B69C",height:"100%",width:pct+"%",borderRadius:"20px",transition:"width .3s"}}));
+progWrap.append(barOuter);
+frag.append(progWrap);
+// Filter buttons
+const filterWrap=h("div",{style:{display:"flex",gap:"8px",marginBottom:"1rem",flexWrap:"wrap"}});
+filterWrap.append(h("button",{style:{padding:"6px 14px",borderRadius:"20px",border:"none",fontSize:".78rem",fontWeight:600,cursor:"pointer",background:state.shopFilter==="need"?"#E8453C":"var(--card-bg)",color:state.shopFilter==="need"?"#fff":"var(--muted)",fontFamily:"inherit"},onClick:()=>{state.shopFilter=state.shopFilter==="need"?null:"need";render()}},"Show Only What I Need"));
+filterWrap.append(h("button",{style:{padding:"6px 14px",borderRadius:"20px",border:"none",fontSize:".78rem",fontWeight:600,cursor:"pointer",background:"var(--card-bg)",color:"var(--muted)",fontFamily:"inherit"},onClick:()=>{state.checked={};saveChecked();render()}},"Reset All"));
+frag.append(filterWrap);
+// Share buttons
+function getNeededText(){
+const lines=[];
+SHOPPING_CATS.forEach(cat=>{
+if(cat.cat.startsWith("Equipment"))return;
+const needed=cat.items.filter((_,ii)=>!state.checked[cat.cat+"-"+ii]);
+needed.forEach(item=>{lines.push(item.replace(/—.*/,"").replace(/\(.*?\)/g,"").replace(/\s+/g," ").trim())})});
+return lines.join("\n")}
+const needCount=totalItems-checkedCount;
+if(needCount>0){
+const shareWrap=h("div",{style:{display:"flex",gap:"8px",marginBottom:"1.25rem",flexWrap:"wrap"}});
+shareWrap.append(h("button",{style:{padding:"8px 16px",borderRadius:"8px",border:"1px solid var(--border)",background:"var(--card-bg)",fontSize:".82rem",fontWeight:600,cursor:"pointer",color:"var(--text)",fontFamily:"inherit",flex:"1",minWidth:"140px"},onClick:()=>{
+const txt=getNeededText();
+const copyPromise=navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(txt):Promise.reject();
+copyPromise.then(()=>{
+const el=document.getElementById("copy-status");el.textContent="Copied ✓";
+setTimeout(()=>{el.textContent="Copy to clipboard"},1500)}).catch(()=>{
+const ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);
+const el=document.getElementById("copy-status");el.textContent="Copied ✓";
+setTimeout(()=>{el.textContent="Copy to clipboard"},1500)})
+}},h("span",{id:"copy-status"},"Copy to clipboard")));
+shareWrap.append(h("button",{style:{padding:"8px 16px",borderRadius:"8px",border:"1px solid var(--border)",background:"var(--card-bg)",fontSize:".82rem",fontWeight:600,cursor:"pointer",color:"var(--text)",fontFamily:"inherit",flex:"1",minWidth:"100px"},onClick:()=>{
+const txt=getNeededText();
+window.open("mailto:?subject=Shopping List — Longevity Protocol&body="+encodeURIComponent(txt))
+}},"Email to self"));
+frag.append(shareWrap);
+frag.append(h("div",{style:{fontSize:".72rem",color:"var(--muted)",marginBottom:"1rem",lineHeight:"1.6"}},"Tip: 'Copy to clipboard' is the fastest — paste into WhatsApp, iMessage, or Notes on your phone. 'Email to self' opens your default mail client with the list pre-filled."));
+}
+// Categories
+SHOPPING_CATS.forEach(cat=>{
+const catItems=state.shopFilter==="need"?cat.items.filter((_,ii)=>!state.checked[cat.cat+"-"+ii]):cat.items;
+if(state.shopFilter==="need"&&catItems.length===0)return;
+const section=h("div",{style:{marginBottom:"1rem"}});
+section.append(h("div",{style:{fontWeight:700,fontSize:".85rem",color:"var(--text)",marginBottom:".5rem",paddingLeft:".25rem"}},cat.cat));
+const grid=h("div",{style:{display:"grid",gap:"4px"}});
+cat.items.forEach((item,ii)=>{
+const key=cat.cat+"-"+ii;
+const checked=!!state.checked[key];
+if(state.shopFilter==="need"&&checked)return;
+const row=h("div",{style:{display:"grid",gridTemplateColumns:"32px 1fr",alignItems:"center",padding:".6rem .75rem",background:"var(--card-bg)",borderRadius:"8px",cursor:"pointer",opacity:checked?".45":"1",transition:"opacity .2s"},onClick:()=>{state.checked[key]=!state.checked[key];saveChecked();render()}},
+h("div",{style:{width:"20px",height:"20px",borderRadius:"5px",border:checked?"none":"2px solid var(--border)",background:checked?"#45B69C":"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s",fontSize:"12px",color:"#fff",fontWeight:700}},checked?"✓":""),
+h("span",{style:{fontSize:".85rem",color:checked?"var(--muted)":"var(--text)",textDecoration:checked?"line-through":"none"}},item));
+grid.append(row);
+});
+section.append(grid);
+frag.append(section);
+});
+return frag;
+}
+function renderLifts(){
+const frag=document.createDocumentFragment();
+const lifts=loadLifts();
+const history=loadHistory();
+// View toggle
+const toggleWrap=h("div",{style:{display:"flex",gap:"8px",marginBottom:"1.25rem"}});
+[["current","Current 1RM","#E8453C"],["progress","Progress","#2D7DD2"]].forEach(([k,l,c])=>{
+toggleWrap.append(h("button",{style:{padding:"10px 20px",borderRadius:"8px",border:"none",fontSize:".85rem",fontWeight:700,cursor:"pointer",background:state.liftView===k?c:"var(--card-bg)",color:state.liftView===k?"#fff":"var(--muted)",fontFamily:"inherit",transition:"all .15s"},onClick:()=>{state.liftView=k;render()}},l))});
+frag.append(toggleWrap);
+if(state.liftView==="current"){
+frag.append(h("p",{class:"intro"},"Enter your estimated 1RM for each lift (use your 5-rep max × 1.15). Training zones auto-calculate. Hit Save to log today's numbers for progress tracking."));
+const grid=h("div",{style:{display:"grid",gap:"12px"}});
+LIFTS.forEach(lift=>{
+const val=lifts[lift.id]||"";
+const card=h("div",{style:{background:"var(--card-bg)",borderRadius:"10px",padding:"1rem 1.25rem",borderLeft:"3px solid "+(lift.zone==="power"?"#E24B4A":lift.zone==="strength"?"#BA7517":"#1D9E75")}});
+const header=h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px"}});
+header.append(h("div",null,h("span",{style:{fontSize:"1rem",fontWeight:700}},lift.icon+" "+lift.name),h("span",{style:{fontSize:".78rem",color:"var(--muted)",marginLeft:"8px"}},lift.day)));
+const input=h("input",{type:"number",id:"lift_"+lift.id,value:val,placeholder:"kg",style:{width:"80px",padding:"6px 10px",borderRadius:"6px",border:"1px solid var(--border)",fontSize:".9rem",fontFamily:"inherit",background:"var(--card-bg)",color:"var(--text)",textAlign:"right"}});
+input.addEventListener("input",function(){
+const v=parseFloat(this.value);
+const zoneEl=document.getElementById("zones_"+lift.id);
+if(v&&v>0){const z=calcZones(v);zoneEl.innerHTML="";
+zoneEl.style.display="grid";
+[["⚡ Power",z.power,"#E24B4A"],["🔴 Strength",z.strength,"#BA7517"],["🟢 Maintenance",z.maintenance,"#1D9E75"]].forEach(([label,range,col])=>{
+const pill=document.createElement("div");pill.style.cssText="font-size:.78rem;padding:4px 10px;border-radius:6px;background:var(--color-background-secondary)";
+pill.innerHTML="<span style='color:"+col+";font-weight:600'>"+label+"</span> <span style='color:var(--muted)'>"+range[0]+"–"+range[1]+"kg</span>";
+zoneEl.appendChild(pill)})}else{zoneEl.innerHTML="<span style='font-size:.78rem;color:var(--muted)'>Enter 1RM to see zones</span>";zoneEl.style.display="block"}});
+header.append(h("div",{style:{display:"flex",alignItems:"center",gap:"8px"}},input,h("span",{style:{fontSize:".82rem",color:"var(--muted)"}},"kg")));
+card.append(header);
+const zones=h("div",{id:"zones_"+lift.id,style:{display:val?"grid":"block",gridTemplateColumns:"repeat(3,1fr)",gap:"6px"}});
+if(val){const z=calcZones(parseFloat(val));
+[["⚡ Power",z.power,"#E24B4A"],["🔴 Strength",z.strength,"#BA7517"],["🟢 Maintenance",z.maintenance,"#1D9E75"]].forEach(([label,range,col])=>{
+const pill=h("div",{style:{fontSize:".78rem",padding:"4px 10px",borderRadius:"6px",background:"var(--color-background-secondary)"}});
+pill.innerHTML="<span style='color:"+col+";font-weight:600'>"+label+"</span> <span style='color:var(--muted)'>"+range[0]+"–"+range[1]+"kg</span>";
+zones.append(pill)})}else{zones.append(h("span",{style:{fontSize:".78rem",color:"var(--muted)"}},"Enter 1RM to see zones"))}
+card.append(zones);grid.append(card)});
+frag.append(grid);
+// Save button
+const saveBtn=h("button",{style:{marginTop:"1.25rem",padding:"12px 20px",borderRadius:"8px",border:"none",background:"#45B69C",color:"#fff",fontSize:".9rem",fontWeight:700,cursor:"pointer",width:"100%",fontFamily:"inherit"},onClick:()=>{
+const newLifts={};let hasData=false;
+LIFTS.forEach(l=>{const el=document.getElementById("lift_"+l.id);if(el&&el.value){newLifts[l.id]=parseFloat(el.value);hasData=true}});
+if(!hasData){alert("Enter at least one 1RM value first.");return}
+saveLifts(newLifts);
+const hist=loadHistory();
+hist.push({date:new Date().toISOString().slice(0,10),lifts:{...newLifts}});
+saveHistory(hist);
+const btn=document.getElementById("save-status");
+btn.textContent="Saved ✓";btn.style.background="#1D9E75";
+setTimeout(()=>{btn.textContent="Save current 1RM values";btn.style.background="#45B69C"},2000)
+}},"Save current 1RM values");
+saveBtn.id="save-status";
+frag.append(saveBtn);
+frag.append(h("div",{style:{marginTop:".75rem",fontSize:".78rem",color:"var(--muted)",textAlign:"center"}},"Values saved to your browser's local storage — they persist between sessions on this device."));
+}else{
+// Progress view
+if(history.length===0){
+frag.append(h("div",{style:{padding:"2rem",textAlign:"center",color:"var(--muted)",fontSize:".9rem"}},"No progress data yet. Go to 'Current 1RM', enter your numbers, and hit Save. Each time you save, a snapshot is logged here."));
+}else{
+frag.append(h("p",{class:"intro"},"Each save creates a snapshot. Track your progression over time."));
+// Summary cards for latest vs first
+const latest=history[history.length-1];
+const first=history[0];
+if(history.length>=2){
+const summWrap=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:"8px",marginBottom:"1.25rem"}});
+LIFTS.forEach(l=>{
+const firstVal=first.lifts[l.id];const latestVal=latest.lifts[l.id];
+if(!firstVal||!latestVal)return;
+const diff=latestVal-firstVal;const pct=Math.round((diff/firstVal)*100);
+const col=diff>0?"#1D9E75":diff<0?"#E24B4A":"var(--muted)";
+summWrap.append(h("div",{style:{background:"var(--card-bg)",borderRadius:"8px",padding:"10px 12px"}},
+h("div",{style:{fontSize:".72rem",color:"var(--muted)",textTransform:"uppercase",letterSpacing:".04em",marginBottom:"2px"}},l.name),
+h("div",{style:{fontSize:"1.1rem",fontWeight:700}},latestVal+"kg"),
+h("div",{style:{fontSize:".78rem",color:col,fontWeight:600}},(diff>0?"+":"")+diff+"kg ("+(diff>0?"+":"")+pct+"%)")))});
+frag.append(summWrap);
+frag.append(h("div",{style:{fontSize:".78rem",color:"var(--muted)",marginBottom:"1rem"}},"Comparing: "+first.date+" → "+latest.date+" ("+history.length+" entries)"));
+}
+// History table
+const table=h("div",{style:{overflowX:"auto"}});
+const tbl=h("table",{style:{width:"100%",borderCollapse:"collapse",fontSize:".78rem"}});
+const thead=h("tr",null,h("td",{style:{padding:"8px 6px",fontWeight:700,color:"var(--text)",borderBottom:"1px solid var(--border)"}},"Date"));
+LIFTS.forEach(l=>{thead.append(h("td",{style:{padding:"8px 6px",fontWeight:700,color:"var(--text)",borderBottom:"1px solid var(--border)",textAlign:"right",whiteSpace:"nowrap"}},l.name))});
+tbl.append(thead);
+history.slice().reverse().forEach((entry,ei)=>{
+const row=h("tr");
+row.append(h("td",{style:{padding:"6px",color:"var(--muted)",borderBottom:"0.5px solid var(--border)"}},entry.date));
+LIFTS.forEach(l=>{
+const v=entry.lifts[l.id];
+const prev=ei<history.length-1?history[history.length-2-ei]:null;
+const prevV=prev?prev.lifts[l.id]:null;
+let arrow="";if(prevV&&v){if(v>prevV)arrow=" ↑";else if(v<prevV)arrow=" ↓"}
+row.append(h("td",{style:{padding:"6px",textAlign:"right",borderBottom:"0.5px solid var(--border)",color:v?"var(--text)":"var(--muted)"}},v?v+"kg"+arrow:"—"))});
+tbl.append(row)});
+table.append(tbl);frag.append(table);
+// Clear button
+frag.append(h("button",{style:{marginTop:"1rem",padding:"8px 16px",borderRadius:"6px",border:"1px solid var(--border)",background:"var(--card-bg)",fontSize:".78rem",cursor:"pointer",color:"var(--muted)",fontFamily:"inherit"},onClick:()=>{if(confirm("Clear all progress history? This cannot be undone.")){saveHistory([]);render()}}},"Clear history"));
+}
+}
+return frag;
+}
+if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostname==="localhost"||location.hostname==="127.0.0.1")){
+window.addEventListener("load",()=>{navigator.serviceWorker.register("./service-worker.js").catch(()=>{})});
+}
+render();
+</script>
+</body>
+</html>
